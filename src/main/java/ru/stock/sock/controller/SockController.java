@@ -1,55 +1,51 @@
 package ru.stock.sock.controller;
 
-import org.springframework.http.HttpStatus;
+
+
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.stock.sock.entity.Sock;
+import ru.stock.sock.dto.SockDto;
+
 import ru.stock.sock.service.SockService;
 
-import java.util.Collection;
+import javax.validation.Valid;
 
 
-@RequestMapping("/api/socks/")
+
+@RequestMapping("/api/socks")
 @RestController
 public class SockController {
     private final SockService sockService;
+
 
     public SockController(SockService sockService) {
         this.sockService = sockService;
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Sock> getStudentInfo(@PathVariable Long id) {
-        Sock sock = sockService.getStudentById(id);
-        if (sock == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(sock);
-    }
-
     @PostMapping("/income")
-    public Sock addStudent(@RequestBody Sock sock) {
-        return sockService.addStudent(sock);
+    public ResponseEntity<String> sockIncome(@RequestBody @Valid SockDto sockDto) {
+        String result = sockService.sockIncome(sockDto);
+        return ResponseEntity.ok(result);
     }
 
-    @PutMapping
-    public ResponseEntity<Sock> editStudent(@RequestBody Sock sock) {
-        Sock foundSock = sockService.editStudent(sock);
-        if (foundSock == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok(foundSock);
+    @PostMapping("/outcome")
+    public ResponseEntity<String> sockOutcome(@RequestBody @Valid SockDto sockDto) {
+        String result = sockService.sockOutcome(sockDto);
+        return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
-        sockService.removeStudent(id);
-        return ResponseEntity.ok().build();
+    @GetMapping
+    public ResponseEntity<String> quantity(@Parameter(description = "Введите цвет носков", example = "black")
+                                         @RequestParam String color,
+                                         @Parameter(description = "Введите количества хлопка в составе носков - moreThan, lessThan, equal", example = "moreThan")
+                                         @RequestParam String operation,
+                                         @Parameter(description = "Введите значение процента хлопка от 0 до 100", example = "30")
+                                         @RequestParam Integer cottonPart) {
+        String result = sockService.getQuantity(color, operation, cottonPart);
+        return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/all")
-    public Collection<Sock> getAll() {
-        return sockService.getAll();
-    }
+
 
 }

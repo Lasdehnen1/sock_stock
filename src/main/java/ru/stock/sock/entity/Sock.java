@@ -1,21 +1,23 @@
 package ru.stock.sock.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
-import java.util.Objects;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import javax.persistence.*;
+
+import java.util.List;
+
 
 @Entity
 public class Sock {
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String color;
     private int cottonPart;
     private int quantity;
+
+    @OneToMany(mappedBy = "sock")
+    private List<Registration> registrations;
 
     public Sock(Long id, String color, int cottonPart, int quantity) {
         this.id = id;
@@ -59,26 +61,11 @@ public class Sock {
         this.quantity = quantity;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Sock sock = (Sock) o;
-        return getCottonPart() == sock.getCottonPart() && getQuantity() == sock.getQuantity() && Objects.equals(getId(), sock.getId()) && Objects.equals(getColor(), sock.getColor());
+    public List<Registration> getRegistrations() {
+        return registrations;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getColor(), getCottonPart(), getQuantity());
-    }
-
-    @Override
-    public String toString() {
-        return "Sock{" +
-                "id=" + id +
-                ", color='" + color + '\'' +
-                ", cottonPart=" + cottonPart +
-                ", quantity=" + quantity +
-                '}';
+    public void setRegistrations(List<Registration> registrations) {
+        this.registrations = registrations;
     }
 }
